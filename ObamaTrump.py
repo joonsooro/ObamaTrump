@@ -11,51 +11,78 @@ import re
 driver = webdriver.Chrome()
 driver.maximize_window() #For maximizing window
 driver.implicitly_wait(5) #gives an implicit wait for 20 seconds
-driver.get("https://genius.com/search?q=Obama")
+driver.get("https://genius.com/search?q=Trump")
+
+print(driver.window_handles)
 
 lyrics_button = driver.find_elements_by_xpath('//div[@ng-repeat = "section in $ctrl.sections"]/search-result-section/div/a')[1]
 lyrics_button.click()
 
+
+# elem = driver.switch_to.active_element
+# print(elem.text)
+# try:
+# 	driver.switchTo().frame("modal_window-content modal_window-content--narrow_width modal_window-content--white_background");
+# except Exception as e:
+# 	print(e)
+
+# driver.switch_to.frame(driver.find_element_by_xpath('//div[@class = "modal_window-content modal_window-content--narrow_width modal_window-content--white_background"]'))
+# driver.find_element_by_xpath('//div[@class = "modal_window-content modal_window-content--narrow_width modal_window-content--white_background"]').send_keys(Keys.NULL)
+popup = driver.find_element_by_xpath('/html/body/div[4]')
+
+# driver.switch_to_frame("fpapi_comm_iframe")
+# try:
+# 	driver.switch_to_alert()
+# except Exception as e: 
+# 	print(e)
+# elem = driver.switch_to.active_element
+# print(elem.text)
 #@ng-if="$scrollable_data_ctrl.models.length
 #1. infinite scroll -> list -> for loop
 #2. open new tab, get lyrics, and close
 
-# SCROLL_PAUSE_TIME = 0.5
+SCROLL_PAUSE_TIME = 3
 
-# while True:
+while True:
 
-# 	# Get scroll height
-# 	### This is the difference. Moving this *inside* the loop
-# 	### means that it checks if scrollTo is still scrolling 
-# 	last_height = driver.execute_script("return document.body.scrollHeight")
+	# Get scroll height
+	### This is the difference. Moving this *inside* the loop
+	### means that it checks if scrollTo is still scrolling 
 
-# 	# Scroll down to bottom
-# 	driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+	last_height = driver.execute_script("return document.body.scrollHeight")
+	lastpopupheight = 0
+	popupheight = 1
+	# Scroll down to bottom
+	while popupheight != lastpopupheight:
+		driver.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", popup)
+		popuplist = driver.find_element_by_xpath('/html/body/div[4]/div[1]/ng-transclude/search-result-paginated-section/scrollable-data/div[1]')
+		lastpopupheight = popupheight
+		popupheight = popuplist.size['height']
+		time.sleep(1)
+	# Wait to load page
+	time.sleep(SCROLL_PAUSE_TIME)
 
-# 	# Wait to load page
-# 	time.sleep(SCROLL_PAUSE_TIME)
+	# Calculate new scroll height and compare with last scroll height
+	new_height = driver.execute_script("return document.body.scrollHeight")
+	if new_height == last_height:
 
-# 	# Calculate new scroll height and compare with last scroll height
-# 	new_height = driver.execute_script("return document.body.scrollHeight")
-# 	if new_height == last_height:
+		# try again (can be removed)
+		driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
 
-# 		# try again (can be removed)
-# 		driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+		# Wait to load page
+		time.sleep(SCROLL_PAUSE_TIME)
 
-# 		# Wait to load page
-# 		time.sleep(SCROLL_PAUSE_TIME)
+		# Calculate new scroll height and compare with last scroll height
+		new_height = driver.execute_script("return document.body.scrollHeight")
 
-# 		# Calculate new scroll height and compare with last scroll height
-# 		new_height = driver.execute_script("return document.body.scrollHeight")
-
-# 		# check if the page height has remained the same
-# 		if new_height == last_height:
-# 		# if so, you are done
-# 			break
-# 		# if not, move on to the next loop
-# 		else:
-# 			last_height = new_height
-# 			continue
+		# check if the page height has remained the same
+		if new_height == last_height:
+		# if so, you are done
+			break
+		# if not, move on to the next loop
+		else:
+			last_height = new_height
+			continue
 
 get_lyrics_buttons = driver.find_elements_by_xpath('//scrollable-data[@src = "$ctrl.infinite_scroll_data"]/div/transclude-injecting-local-scope/search-result-item/div/mini-song-card/a')
 lyricslist = list()
@@ -141,8 +168,8 @@ for lyric in lyricslist:
 	except Exception as e:
 		album = 'none'
 		year = 'none'
-		#driver.close()
-		# next
+		
+		#next
 			
 
 
