@@ -31,13 +31,20 @@ class ObamalyricsSpider(Spider):
 	#3. write down result-urls with the extracted names
 	#4. get the results!
 
-	#find a way to change blank space to -
-	Kendrcik Lamar 
+	#find a way to change blank space to 
 	#replace
-
-
+	def parse_1(self, response):
+		for url in resultlists:
+			yield Request(url=url,callback=self.parse)
 
 	def parse(self, response):
 		lyric = response.xpath('//div[@id="lyrics-body-text"]//p/text()').extract()
 		ly=[x.strip() for x in lyric] 
-		pass
+
+		 item = ObamalyricsItem()
+		 item['lyrics']= ly 
+
+		 yield item
+		
+		
+
