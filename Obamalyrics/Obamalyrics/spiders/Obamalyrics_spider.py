@@ -1,4 +1,4 @@
-from scarpy import Spider
+from scrapy import Spider, Request
 from Obamalyrics.items import ObamalyricsItem
 import csv
 import pandas as pd
@@ -22,6 +22,8 @@ song_2 = [x.replace(" ", "-") for x in song_]
 
 songlist=list(zip(artist_2,song_2))
 resultlists = ["http://www.metrolyrics.com/"+x[1]+"-lyrics-"+x[0]+".html" for x in songlist]
+reslistwithname = list(zip(artist, resultlists))
+
 
 class ObamalyricsSpider(Spider):
 	name = 'Obamalyircs_spider'
@@ -33,15 +35,30 @@ class ObamalyricsSpider(Spider):
 
 	#find a way to change blank space to 
 	#replace
-	def parse_1(self, response):
-		for url in resultlists:
-			yield Request(url=url,callback=self.parse)
-
 	def parse(self, response):
-		lyric = response.xpath('//div[@id="lyrics-body-text"]//p/text()').extract()
-		ly=[x.strip() for x in lyric] 
+		# for url in resultlists:
+		for i in range(len(resultlists)):
+			# yield Request(url=url,callback=self.parse_lyrics)
+			artist = reslistwithname[i][0]
+			try:
+				yield Request(url=reslistwithname[i][1], meta={'artist': artist}, callback=self.parse_lyrics)
+			except:
+				next
+
+
+	def parse_lyrics(self, response):
+		try:
+			artist = response.meta['artist']
+		except:
+			artist = ""
+		try:
+			lyric = response.xpath('//div[@id="lyrics-body-text"]//p/text()').extract()
+			ly=[x.strip() for x in lyric] 
+		except:
+			ly= ""
 
 		item = ObamalyricsItem()
+		item['artist'] = artist
 		item['lyrics']= ly 
 
 		yield item
