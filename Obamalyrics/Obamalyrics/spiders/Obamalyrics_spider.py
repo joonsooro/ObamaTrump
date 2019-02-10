@@ -22,7 +22,7 @@ song_2 = [x.replace(" ", "-") for x in song_]
 
 songlist=list(zip(artist_2,song_2))
 resultlists = ["http://www.metrolyrics.com/"+x[1]+"-lyrics-"+x[0]+".html" for x in songlist]
-reslistwithname = list(zip(artist, resultlists))
+reslistwithname = list(zip(artist, resultlists, song))
 
 
 class ObamalyricsSpider(Spider):
@@ -40,8 +40,9 @@ class ObamalyricsSpider(Spider):
 		for i in range(len(resultlists)):
 			# yield Request(url=url,callback=self.parse_lyrics)
 			artist = reslistwithname[i][0]
+			song = reslistwithname[i][2]
 			try:
-				yield Request(url=reslistwithname[i][1], meta={'artist': artist}, callback=self.parse_lyrics)
+				yield Request(url=reslistwithname[i][1], meta={'artist': artist, 'song':song}, callback=self.parse_lyrics)
 			except:
 				next
 
@@ -49,8 +50,10 @@ class ObamalyricsSpider(Spider):
 	def parse_lyrics(self, response):
 		try:
 			artist = response.meta['artist']
+			song = response.meta['song']
 		except:
 			artist = ""
+			song = ""
 		try:
 			lyric = response.xpath('//div[@id="lyrics-body-text"]//p/text()').extract()
 			ly=[x.strip() for x in lyric] 
@@ -59,6 +62,7 @@ class ObamalyricsSpider(Spider):
 
 		item = ObamalyricsItem()
 		item['artist'] = artist
+		item['song'] = song
 		item['lyrics']= ly 
 
 		yield item

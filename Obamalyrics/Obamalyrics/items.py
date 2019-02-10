@@ -12,4 +12,5 @@ class ObamalyricsItem(scrapy.Item):
 	# define the fields for your item here like:
 	# name = scrapy.Field()
 	artist = scrapy.Field()
+	song = scrapy.Field()
 	lyrics = scrapy.Field()
