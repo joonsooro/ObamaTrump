@@ -11,6 +11,8 @@ import re
 driver = webdriver.Chrome()
 driver.maximize_window() #For maximizing window
 driver.implicitly_wait(5) #gives an implicit wait for 20 seconds
+
+#driver.get("https://genius.com/search?q=Obama")
 driver.get("https://genius.com/search?q=Trump")
 
 print(driver.window_handles)

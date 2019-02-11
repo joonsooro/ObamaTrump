@@ -6,10 +6,10 @@ import re
 import string
 #import csv from a certain folder.
 
-Obamacsv = pd.read_csv("~/Desktop/ObamaTrump/Obama.csv")
+Trumpcsv = pd.read_csv("~/Desktop/ObamaTrump/Trump.csv")
 #list(set(Obamacsv['artist'].tolist())
-artist = Obamacsv['artist'].tolist()
-song = Obamacsv['song'].tolist()
+artist = Trumpcsv['artist'].tolist()
+song = Trumpcsv['song'].tolist()
 
 # artist_ = [re.sub('[^A-Za-z0-9]+', '', art) for art in artist]
 artist_ = [''.join(c for c in s if c not in string.punctuation) for s in artist]
@@ -28,7 +28,7 @@ reslistwithname = list(zip(artist, resultlists, song))
 class ObamalyricsSpider(Spider):
 	name = 'Obamalyircs_spider'
 	allowed_urls = ['https://http://www.metrolyrics.com']
-	start_urls = ['http://www.metrolyrics.com/humble-lyrics-kendrick-lamar.html']
+	start_urls = ['http://www.metrolyrics.com/its-everyday-bro-lyrics-jake-paul.html']
 
 	#3. write down result-urls with the extracted names
 	#4. get the results!
